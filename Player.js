@@ -52,6 +52,14 @@ Player.prototype.getPlayableCards = function(gameCard) {
         return false;
     });
 };
+
+Player.prototype.getPoints = function() {
+    return this.deck.reduce(function(points, card){
+        points += card.points;
+        return points;
+    }, 0);
+};
+
 Player.prototype.toString = function() {
     return '[Player#'+this.id+': '+this.deck.join(',')+']';
 };

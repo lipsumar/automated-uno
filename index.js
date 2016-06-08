@@ -54,14 +54,18 @@ var deck = [
     '+2-Y', '+2-G', '+2-B', '+2-R',
     '+2-Y', '+2-G', '+2-B', '+2-R',
 
-    'COLOR', 'COLOR', 'COLOR', 'COLOR',
-    '+4', '+4', '+4', '+4'
+    'COLOR', 'COLOR', 'COLOR', 'COLOR', // wild
+    '+4', '+4', '+4', '+4'              // wild +4
 ].map(function(c){
     var parts = c.split('-');
+
+    var valueInt = parseInt(parts[0], 10);
+
     return new Card({
         value: parts[0],
         color: parts[1] ? colorAbbrToFull[parts[1]] : 'black',
-        addsCards: parts[0][0] === '+' ? parts[0][1] : null
+        addsCards: parts[0][0] === '+' ? parts[0][1] : null,
+        points: isNaN(valueInt) ? (parts.length === 1 ? 50 : 20) : valueInt
     });
 });
 
