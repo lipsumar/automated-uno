@@ -10,7 +10,6 @@ Player.prototype.play = function(game) {
 
     // make sure we have a playable card
     while(!this.canPlayCard(game.card)){
-console.log(this.getPlayableCards(game.card));
         if(game.deck.length===0){
             throw new Error('Unexpected end of game!');
         }
