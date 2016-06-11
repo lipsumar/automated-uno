@@ -1,11 +1,4 @@
-require('pretty-error').start();
-
-
-var Player = require('./Player');
-var Game = require('./Game');
-var Card = require('./card');
-
-
+var Card = require('./Card');
 
 var colorAbbrToFull = {Y:'yellow', G:'green', B:'blue', R:'red'};
 var deck = [
@@ -61,19 +54,4 @@ var deck = [
         points: isNaN(valueInt) ? (parts.length === 1 ? 50 : 20) : valueInt
     });
 });
-
-
-var players = [
-    new Player(1),
-    new Player(2),
-    new Player(3)
-];
-var game = new Game({
-    deck: deck,
-    players: players
-});
-
-console.log('#### Start ################################');
-game.start();
-game.debug();
-
+module.exports = deck;
