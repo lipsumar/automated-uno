@@ -29,6 +29,20 @@ body::before{
 	pointer-events: none;
 }
 
+button{
+    background: transparent;
+    border:1px solid #fff;
+    padding:10px 14px;
+    color:#fff;
+    font-size:16px;
+
+    transition: all 0.1s ease;
+}
+button:hover{
+
+    transform:scale(1.03)
+}
+
 .play-area{
 	display: flex;
 	justify-content: center;
