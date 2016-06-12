@@ -13,6 +13,7 @@ Game.prototype.start = function() {
     this.direction = +1;
 
     do{
+        this.resetPlayersDecks();
         this.deck = _.shuffle(this.deck);
         this.deal(7);
 
@@ -23,7 +24,6 @@ Game.prototype.start = function() {
 
 
 };
-
 
 Game.prototype.play = function() {
     this.turnCount++;
@@ -36,9 +36,9 @@ Game.prototype.play = function() {
     var playerCard = player.play(this);
 
 
-    console.log('Turn #'+this.turnCount+' ('+this.deck.length+' in game deck)');
-    console.log('  '+player);
-    console.log('  '+playerCard);
+    // console.log('Turn #'+this.turnCount+' ('+this.deck.length+' in game deck)');
+    // console.log('  '+player);
+    // console.log('  '+playerCard);
 
 
     // put previous card back in the deck
@@ -62,6 +62,11 @@ Game.prototype.play = function() {
     // have player won yet ?
     if(player.deck.length === 0){
         this.winner = player;
+        this.winner.handsWon++;
+        this.winner.addScore(this.players.reduce(function(total, player){
+            total += player.getPoints();
+            return total;
+        }, 0));
         console.log('Winner!', player);
     }
 
@@ -84,6 +89,13 @@ Game.prototype.nextPlayer = function() {
 
 Game.prototype.getCurrentPlayer = function() {
     return this.players[this.currentPlayerIndex];
+};
+
+Game.prototype.resetPlayersDecks = function() {
+    this.players.forEach(function(p){
+        this.deck = this.deck.concat(p.deck);
+        p.deck = [];
+    }, this);
 };
 
 

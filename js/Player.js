@@ -1,6 +1,9 @@
+var _ = require('underscore');
 
 function Player(id){
     this.id = id;
+    this.score = 0;
+    this.handsWon = 0;
     this.deck = [];
 }
 Player.prototype.addCard = function(card) {
@@ -11,7 +14,7 @@ Player.prototype.play = function(game) {
     // make sure we have a playable card
     while(!this.canPlayCard(game.card)){
         if(game.deck.length===0){
-            throw new Error('Unexpected end of game!');
+            throw new Error('ERR_EMPTY_GAME_DECK');
         }
         this.deck.push(game.deck.shift());
     }
@@ -33,7 +36,24 @@ Player.prototype.pickColor = function() {
 };
 Player.prototype.pickCardToPlay = function(gameCard) {
     var playable = this.getPlayableCards(gameCard);
-    return playable[Math.round(Math.random()*(playable.length-1))];
+    if(this.id === 1){
+
+        // too many of a playbale some color ?
+        var manyColor = _.chain(playable).groupBy('color').map(function(group){
+            return {length: group.length, cards: group, color: group[0].color};
+        }).sortBy('length').reverse().value();
+
+        if(manyColor[0].length > 2){
+            console.log('get rid of '+manyColor[0].color+' ('+manyColor[0].length+')');
+            return _.chain(manyColor[0].cards).sortBy('points').reverse().value()[0];
+        }
+
+        return _.chain(playable).sortBy('points').value()[0];
+
+    }else{
+        return _.chain(playable).sample().value();
+    }
+
 };
 Player.prototype.canPlayCard = function(gameCard) {
     return this.getPlayableCards(gameCard).length > 0;
@@ -58,6 +78,10 @@ Player.prototype.getPoints = function() {
         points += card.points;
         return points;
     }, 0);
+};
+
+Player.prototype.addScore = function(add) {
+    this.score+=add;
 };
 
 Player.prototype.toString = function() {

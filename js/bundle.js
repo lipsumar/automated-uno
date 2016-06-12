@@ -2,6 +2,7 @@
 function Card (opts) {
     this.value = opts.value;
     this.color = opts.color;
+    this.points = opts.points;
 
     if(this.value === 'STOP'){
         this.shortString = '✘';
@@ -41,6 +42,7 @@ Game.prototype.start = function() {
     this.direction = +1;
 
     do{
+        this.resetPlayersDecks();
         this.deck = _.shuffle(this.deck);
         this.deal(7);
 
@@ -51,7 +53,6 @@ Game.prototype.start = function() {
 
 
 };
-
 
 Game.prototype.play = function() {
     this.turnCount++;
@@ -64,9 +65,9 @@ Game.prototype.play = function() {
     var playerCard = player.play(this);
 
 
-    console.log('Turn #'+this.turnCount+' ('+this.deck.length+' in game deck)');
-    console.log('  '+player);
-    console.log('  '+playerCard);
+    // console.log('Turn #'+this.turnCount+' ('+this.deck.length+' in game deck)');
+    // console.log('  '+player);
+    // console.log('  '+playerCard);
 
 
     // put previous card back in the deck
@@ -90,6 +91,11 @@ Game.prototype.play = function() {
     // have player won yet ?
     if(player.deck.length === 0){
         this.winner = player;
+        this.winner.handsWon++;
+        this.winner.addScore(this.players.reduce(function(total, player){
+            total += player.getPoints();
+            return total;
+        }, 0));
         console.log('Winner!', player);
     }
 
@@ -112,6 +118,13 @@ Game.prototype.nextPlayer = function() {
 
 Game.prototype.getCurrentPlayer = function() {
     return this.players[this.currentPlayerIndex];
+};
+
+Game.prototype.resetPlayersDecks = function() {
+    this.players.forEach(function(p){
+        this.deck = this.deck.concat(p.deck);
+        p.deck = [];
+    }, this);
 };
 
 
@@ -142,9 +155,12 @@ Game.prototype.debug = function() {
 module.exports = Game;
 
 },{"underscore":7}],3:[function(require,module,exports){
+var _ = require('underscore');
 
 function Player(id){
     this.id = id;
+    this.score = 0;
+    this.handsWon = 0;
     this.deck = [];
 }
 Player.prototype.addCard = function(card) {
@@ -155,7 +171,7 @@ Player.prototype.play = function(game) {
     // make sure we have a playable card
     while(!this.canPlayCard(game.card)){
         if(game.deck.length===0){
-            throw new Error('Unexpected end of game!');
+            throw new Error('ERR_EMPTY_GAME_DECK');
         }
         this.deck.push(game.deck.shift());
     }
@@ -177,7 +193,24 @@ Player.prototype.pickColor = function() {
 };
 Player.prototype.pickCardToPlay = function(gameCard) {
     var playable = this.getPlayableCards(gameCard);
-    return playable[Math.round(Math.random()*(playable.length-1))];
+    if(this.id === 1){
+
+        // too many of a playbale some color ?
+        var manyColor = _.chain(playable).groupBy('color').map(function(group){
+            return {length: group.length, cards: group, color: group[0].color};
+        }).sortBy('length').reverse().value();
+
+        if(manyColor[0].length > 2){
+            console.log('get rid of '+manyColor[0].color+' ('+manyColor[0].length+')');
+            return _.chain(manyColor[0].cards).sortBy('points').reverse().value()[0];
+        }
+
+        return _.chain(playable).sortBy('points').value()[0];
+
+    }else{
+        return _.chain(playable).sample().value();
+    }
+
 };
 Player.prototype.canPlayCard = function(gameCard) {
     return this.getPlayableCards(gameCard).length > 0;
@@ -204,6 +237,10 @@ Player.prototype.getPoints = function() {
     }, 0);
 };
 
+Player.prototype.addScore = function(add) {
+    this.score+=add;
+};
+
 Player.prototype.toString = function() {
     return '[Player#'+this.id+': '+this.deck.join(',')+']';
 };
@@ -212,7 +249,7 @@ Player.prototype.toString = function() {
 
 module.exports = Player;
 
-},{}],4:[function(require,module,exports){
+},{"underscore":7}],4:[function(require,module,exports){
 var Card = require('./Card');
 
 var colorAbbrToFull = {Y:'yellow', G:'green', B:'blue', R:'red'};
@@ -272,88 +309,114 @@ var deck = [
 module.exports = deck;
 
 },{"./Card":1}],5:[function(require,module,exports){
-var uno = require('./uno.js');
+/* global d3 */
 
-// tiny dom lib
-function $(n){var t=document.querySelector(n);return t&&(t.on=function(n,c){return t.addEventListener.call(t,n,function(n){c.call(t,n)})}),t}function $$(n){function t(n){[].forEach.call(this,n)}var c=n;return n&&"string"==typeof n&&(c=document.querySelectorAll(n)),{each:function(n,e){if(c instanceof NodeList)t.call(c,function(t){n.call(e||t)});else for(var l in c)c.hasOwnProperty(l)&&n.call(e||c[l],c[l],l,c)},on:function(n,e){t.call(c,function(t){t.addEventListener.call(t,n,e.bind(t))})}}}
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = (window.innerWidth) - margin.left - margin.right,
+    height = 200 - margin.top - margin.bottom;
 
 
-function updateGame(uno){
 
-    function updatePlayer(player){
+var x = d3.scale.linear()
+    .range([0, width]);
 
-        player.el.innerHTML = player.deck.reduce(function(html, card){
-            html+=card.toHtml('card--small');
-            return html;
-        }, '');
+var y = d3.scale.linear()
+    .range([height,0]);
 
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+
+module.exports = {
+    draw: function(data, prop){
+        svg.selectAll("*").remove();
+        var xMax = data.length > 100 ? data.length : 100;
+
+        x.domain([0, xMax]);
+    //y.domain([0, 10 ]);
+    //y.domain(d3.extent(data, function(d) { return d.value; }));
+        y.domain([0, 50]);
+
+        var lines;
+        if(data[0]){
+            lines = data[0].scores.map(function(d, i){
+                return d3.svg.line()
+                    .x(function(d,i) { return x(i); })
+                    .y(function(d) { return y(d.scores[i][prop]); });
+            });
+        }
+
+
+
+
+        svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+        svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text("Score");
+
+
+        svg.append('line')
+          .attr('x1', x(0))
+          .attr('x2', x(xMax))
+          .attr('y1', y(500))
+          .attr('y2', y(500));
+
+        if(!data[0]){
+            return;
+        }
+        data[0].scores.map(function(d, i){
+            svg.append("path")
+              .datum(data)
+              .attr("class", "line line-player-"+d.id)
+              .attr("d", lines[i]);
+        });
+
+
+
+
+        // // Add the scatterplot
+        // svg.selectAll("dot")
+        //   .data(data)
+        //   .enter().append("circle")
+        //   .attr("r", 5)
+        //   .attr("cx", function(d, i) { return x(i); })
+        //   .attr("cy", function(d) { return y(d.value); });
     }
+};
 
-    uno.getPlayers().forEach(updatePlayer);
 
-    var currentPlayer = uno.getCurrentPlayer();
-    $$('.player').each(function(){
-        this.classList.remove('current');
-    });
-    currentPlayer.el.classList.add('current');
 
-    var currentCard = uno.getCard();
-    $('.current-card').innerHTML = currentCard.toHtml();
-    $('.current-card .card').classList.add(currentCard.currentTargetColor);
 
-    var winner = uno.getWinner();
-    if(winner){
-        winner.el.classList.add('winner');
-        stop();
-    }
-}
 
-var nextPlayTimeout;
-function play(){
-    uno.play();
-    updateGame(uno);
-    if(autoPlay){
-        nextPlayTimeout = setTimeout(play, 700);
-    }
-}
-function stop(){
-    if(nextPlayTimeout){
-        clearTimeout(nextPlayTimeout);
-    }
-    autoPlay = false;
-}
 
-var autoPlay = false;
-var player;
-for(var i=0;i<4;i++){
-    player = uno.createPlayer();
-    player.el = $('.player-'+(i+1));
-    uno.addPlayer(player);
-}
 
-uno.start();
-updateGame(uno);
 
-$('.restart').on('click', function(){
-    stop();
-    $('.play').innerHTML = ' ▶ ';
-    uno.start();
-    updateGame(uno);
-});
-$('.step').on('click', function(){
-    play();
-});
-
-$('.play').on('click', function(){
-    autoPlay = !autoPlay;
-    this.innerHTML = autoPlay ? ' ❙❙ ' : ' ▶ ';
-    if(autoPlay){
-        play();
-    }
-
-});
-
-},{"./uno.js":6}],6:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Player = require('./Player');
 var Game = require('./Game');
 var deck = require('./deck');
@@ -1951,4 +2014,163 @@ module.exports = API;
   }
 }.call(this));
 
-},{}]},{},[5]);
+},{}],8:[function(require,module,exports){
+var uno = require('./uno.js');
+var scoreGraph = require('./score-graph');
+var history = [];
+var totalRounds = 0;
+// tiny dom lib
+function $(n){var t=document.querySelector(n);return t&&(t.on=function(n,c){return t.addEventListener.call(t,n,function(n){c.call(t,n)})}),t}function $$(n){function t(n){[].forEach.call(this,n)}var c=n;return n&&"string"==typeof n&&(c=document.querySelectorAll(n)),{each:function(n,e){if(c instanceof NodeList)t.call(c,function(t){n.call(e||t)});else for(var l in c)c.hasOwnProperty(l)&&n.call(e||c[l],c[l],l,c)},on:function(n,e){t.call(c,function(t){t.addEventListener.call(t,n,e.bind(t))})}}}
+
+
+
+function updateGame(uno){
+
+    function updatePlayer(player){
+
+        player.el.innerHTML = player.deck.reduce(function(html, card){
+            html+=card.toHtml('card--small');
+            return html;
+        }, '');
+
+    }
+
+    uno.getPlayers().forEach(updatePlayer);
+
+    var currentPlayer = uno.getCurrentPlayer();
+    $$('.player').each(function(){
+        this.classList.remove('current');
+    });
+    currentPlayer.el.classList.add('current');
+
+    var currentCard = uno.getCard();
+    $('.current-card').innerHTML = currentCard.toHtml();
+    $('.current-card .card').classList.add(currentCard.currentTargetColor);
+
+    var winner = uno.getWinner();
+    if(winner){
+        $$('.player').each(function(){
+            this.classList.remove('winner');
+        });
+        winner.el.classList.add('winner');
+    }
+}
+
+function updateScores(){
+
+    scoreGraph.draw(history, 'roundsWon');
+
+    $('.stats').innerHTML = uno.getPlayers().map(function(p){
+        return '<li>'+'PLAYER '+p.id+': '+p.handsWon+' hands / '+p.roundsWon+'</li>';
+    }).join('')
+        + '<li>TOTAL: '+(history.length-1)+' hands / '+totalRounds+'</li>';
+}
+
+function resetScores(){
+
+    uno.getPlayers().forEach(function(p){
+        p.score = 0;
+    });
+
+}
+
+var nextPlayTimeout;
+function play(){
+    var winner = uno.getWinner();
+    if(winner){
+        updateGame(uno);
+
+        // end of hand
+        history.push({
+            tstamp: new Date(),
+            scores: uno.getPlayers().map(function(p){
+                return {
+                    id: p.id,
+                    score: p.score,
+                    roundsWon: p.roundsWon
+                };
+            })
+        });
+
+        updateScores();
+
+        // reset scores
+        if(winner.score >= 500){
+            winner.roundsWon++;
+            totalRounds++;
+            resetScores();
+        }
+
+        // auto restart
+        uno.start();
+
+
+    }else{
+        try{
+            uno.play();
+        }catch(err){
+            if(err.message === 'ERR_EMPTY_GAME_DECK'){
+                resetScores();
+                uno.start();// start again
+            }
+        }
+
+        //updateGame(uno);
+    }
+
+
+    if(autoPlay){
+        nextPlayTimeout = setTimeout(play, 0);
+    }
+}
+function stop(){
+    if(nextPlayTimeout){
+        clearTimeout(nextPlayTimeout);
+    }
+    autoPlay = false;
+}
+
+var autoPlay = false;
+var player;
+for(var i=0;i<4;i++){
+    player = uno.createPlayer();
+    player.el = $('.player-'+(i+1));
+    player.roundsWon = 0;
+    uno.addPlayer(player);
+}
+
+history.push({
+    tstamp: new Date(),
+    scores: uno.getPlayers().map(function(p){
+        return {
+            id: p.id,
+            score: p.score,
+            roundsWon: p.roundsWon
+        };
+    })
+});
+
+uno.start();
+updateGame(uno);
+updateScores();
+
+$('.restart').on('click', function(){
+    stop();
+    $('.play').innerHTML = ' ▶ ';
+    uno.start();
+    updateGame(uno);
+});
+$('.step').on('click', function(){
+    play();
+});
+
+$('.play').on('click', function(){
+    autoPlay = !autoPlay;
+    this.innerHTML = autoPlay ? ' ❙❙ ' : ' ▶ ';
+    if(autoPlay){
+        play();
+    }
+
+});
+
+},{"./score-graph":5,"./uno.js":6}]},{},[8]);

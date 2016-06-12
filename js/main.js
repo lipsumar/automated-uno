@@ -1,7 +1,10 @@
 var uno = require('./uno.js');
-
+var scoreGraph = require('./score-graph');
+var history = [];
+var totalRounds = 0;
 // tiny dom lib
 function $(n){var t=document.querySelector(n);return t&&(t.on=function(n,c){return t.addEventListener.call(t,n,function(n){c.call(t,n)})}),t}function $$(n){function t(n){[].forEach.call(this,n)}var c=n;return n&&"string"==typeof n&&(c=document.querySelectorAll(n)),{each:function(n,e){if(c instanceof NodeList)t.call(c,function(t){n.call(e||t)});else for(var l in c)c.hasOwnProperty(l)&&n.call(e||c[l],c[l],l,c)},on:function(n,e){t.call(c,function(t){t.addEventListener.call(t,n,e.bind(t))})}}}
+
 
 
 function updateGame(uno){
@@ -29,17 +32,78 @@ function updateGame(uno){
 
     var winner = uno.getWinner();
     if(winner){
+        $$('.player').each(function(){
+            this.classList.remove('winner');
+        });
         winner.el.classList.add('winner');
-        stop();
     }
+}
+
+function updateScores(){
+
+    scoreGraph.draw(history, 'roundsWon');
+
+    $('.stats').innerHTML = uno.getPlayers().map(function(p){
+        return '<li>'+'PLAYER '+p.id+': '+p.handsWon+' hands / '+p.roundsWon+'</li>';
+    }).join('')
+        + '<li>TOTAL: '+(history.length-1)+' hands / '+totalRounds+'</li>';
+}
+
+function resetScores(){
+
+    uno.getPlayers().forEach(function(p){
+        p.score = 0;
+    });
+
 }
 
 var nextPlayTimeout;
 function play(){
-    uno.play();
-    updateGame(uno);
+    var winner = uno.getWinner();
+    if(winner){
+        updateGame(uno);
+
+        // end of hand
+        history.push({
+            tstamp: new Date(),
+            scores: uno.getPlayers().map(function(p){
+                return {
+                    id: p.id,
+                    score: p.score,
+                    roundsWon: p.roundsWon
+                };
+            })
+        });
+
+        updateScores();
+
+        // reset scores
+        if(winner.score >= 500){
+            winner.roundsWon++;
+            totalRounds++;
+            resetScores();
+        }
+
+        // auto restart
+        uno.start();
+
+
+    }else{
+        try{
+            uno.play();
+        }catch(err){
+            if(err.message === 'ERR_EMPTY_GAME_DECK'){
+                resetScores();
+                uno.start();// start again
+            }
+        }
+
+        //updateGame(uno);
+    }
+
+
     if(autoPlay){
-        nextPlayTimeout = setTimeout(play, 700);
+        nextPlayTimeout = setTimeout(play, 0);
     }
 }
 function stop(){
@@ -54,11 +118,24 @@ var player;
 for(var i=0;i<4;i++){
     player = uno.createPlayer();
     player.el = $('.player-'+(i+1));
+    player.roundsWon = 0;
     uno.addPlayer(player);
 }
 
+history.push({
+    tstamp: new Date(),
+    scores: uno.getPlayers().map(function(p){
+        return {
+            id: p.id,
+            score: p.score,
+            roundsWon: p.roundsWon
+        };
+    })
+});
+
 uno.start();
 updateGame(uno);
+updateScores();
 
 $('.restart').on('click', function(){
     stop();

@@ -1,6 +1,7 @@
 function Card (opts) {
     this.value = opts.value;
     this.color = opts.color;
+    this.points = opts.points;
 
     if(this.value === 'STOP'){
         this.shortString = '✘';
