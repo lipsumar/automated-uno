@@ -161,19 +161,25 @@ function Player(id){
     this.score = 0;
     this.handsWon = 0;
     this.deck = [];
+    this._ = _;
 }
 Player.prototype.addCard = function(card) {
     this.deck.push(card);
 };
 Player.prototype.play = function(game) {
-
+    var self = this;
     // make sure we have a playable card
     while(!this.canPlayCard(game.card,game)){
         this.deck.push(game.shiftCardFromDeck());
     }
 
     // pick a playable card
-    var card = this.pickCardToPlay(game.card,game);
+    var others = game.players.reduce(function(oth, p){
+        if(p.id === self.id) return oth;
+        oth.push({id: p.id, cards: p.deck.length});
+        return oth;
+    },[]);
+    var card = this.pickCardToPlay(game.card, others);
 
     // remove it from deck
     this.deck.splice(this.deck.indexOf(card),1);
@@ -187,7 +193,7 @@ Player.prototype.play = function(game) {
 Player.prototype.pickColor = function() {
     return ['red', 'green', 'blue', 'yellow'][Math.round(Math.random()*3)];
 };
-Player.prototype.pickCardToPlay = function(gameCard) {
+Player.prototype.pickCardToPlay = function(gameCard, others) {
     var playable = this.getPlayableCards(gameCard);
     if(this.id === 1){
 
@@ -416,6 +422,7 @@ module.exports = {
 var Player = require('./Player');
 var Game = require('./Game');
 var deck = require('./deck');
+var _ = require('underscore');
 
 var players = [],
     playerId = 1;
@@ -454,13 +461,16 @@ var API = {
     getPlayers: function(){
         return players;
     },
+    getPlayer: function(id){
+        return _.findWhere(players, {id: id});
+    },
     getCurrentPlayer: function(){
         return game.getCurrentPlayer();
     }
 };
 module.exports = API;
 
-},{"./Game":2,"./Player":3,"./deck":4}],7:[function(require,module,exports){
+},{"./Game":2,"./Player":3,"./deck":4,"underscore":7}],7:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -2016,9 +2026,22 @@ var scoreGraph = require('./score-graph');
 var history = [];
 var totalRounds = 0;
 var totalTurns = 0;
+var codeHeader = 'var _ = this._;\nvar playable = this.getPlayableCards(gameCard);\n';
+var defaultCode = 'return _.chain(playable).sample().value();';
+
 // tiny dom lib
 function $(n){var t=document.querySelector(n);return t&&(t.on=function(n,c){return t.addEventListener.call(t,n,function(n){c.call(t,n)})}),t}function $$(n){function t(n){[].forEach.call(this,n)}var c=n;return n&&"string"==typeof n&&(c=document.querySelectorAll(n)),{each:function(n,e){if(c instanceof NodeList)t.call(c,function(t){n.call(e||t)});else for(var l in c)c.hasOwnProperty(l)&&n.call(e||c[l],c[l],l,c)},on:function(n,e){t.call(c,function(t){t.addEventListener.call(t,n,e.bind(t))})}}}
 
+
+
+
+function openPlayerOptions(player){
+    $('.player-options').classList.add('player-options--show');
+    $('.player-options .js-code').value = player.code;
+}
+function closePlayerOptions(){
+    $('.player-options').classList.remove('player-options--show');
+}
 
 
 function updateGame(uno){
@@ -2114,6 +2137,7 @@ function play(){
                 resetScores();
                 uno.start();// start again
             }else{
+                console.log('err', err);
                 new Audio('resources/buzz.mp3').play();
                 stop();
             }
@@ -2134,12 +2158,18 @@ function stop(){
     autoPlay = false;
 }
 
+function setCode(player, code){
+    player.code = code;
+    player.pickCardToPlay = new Function('gameCard','others',codeHeader + player.code);
+}
+
 var autoPlay = false;
 var player;
 for(var i=0;i<4;i++){
     player = uno.createPlayer();
-    player.el = $('.player-'+(i+1));
+    player.el = $('.player-'+(i+1)+' .cards');
     player.roundsWon = 0;
+    setCode(player, defaultCode);
     uno.addPlayer(player);
 }
 
@@ -2176,6 +2206,22 @@ $('.play').on('click', function(){
         play();
     }
 
+});
+
+var playerEdit;
+$$('.player').on('click', function(){
+    var playerId = parseInt(this.getAttribute('data-player-id'), 10);
+    var player = uno.getPlayer(playerId);
+    playerEdit = player;
+    openPlayerOptions(player);
+});
+$('.player-options .close').on('click', function(){
+    closePlayerOptions();
+});
+
+$('.player-options .js-code-submit').on('click', function(){
+    var code = $('.player-options textarea').value;
+    setCode(playerEdit, code);
 });
 
 },{"./score-graph":5,"./uno.js":6}]},{},[8]);

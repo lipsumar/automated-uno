@@ -5,19 +5,25 @@ function Player(id){
     this.score = 0;
     this.handsWon = 0;
     this.deck = [];
+    this._ = _;
 }
 Player.prototype.addCard = function(card) {
     this.deck.push(card);
 };
 Player.prototype.play = function(game) {
-
+    var self = this;
     // make sure we have a playable card
     while(!this.canPlayCard(game.card,game)){
         this.deck.push(game.shiftCardFromDeck());
     }
 
     // pick a playable card
-    var card = this.pickCardToPlay(game.card,game);
+    var others = game.players.reduce(function(oth, p){
+        if(p.id === self.id) return oth;
+        oth.push({id: p.id, cards: p.deck.length});
+        return oth;
+    },[]);
+    var card = this.pickCardToPlay(game.card, others);
 
     // remove it from deck
     this.deck.splice(this.deck.indexOf(card),1);
@@ -31,7 +37,7 @@ Player.prototype.play = function(game) {
 Player.prototype.pickColor = function() {
     return ['red', 'green', 'blue', 'yellow'][Math.round(Math.random()*3)];
 };
-Player.prototype.pickCardToPlay = function(gameCard) {
+Player.prototype.pickCardToPlay = function(gameCard, others) {
     var playable = this.getPlayableCards(gameCard);
     if(this.id === 1){
 

@@ -3,16 +3,16 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Automated UNO</title>
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css?1465758571">
 </head>
 <body>
 
 	<div class="game">
 		<div class="players">
-			<div class="player player-1"></div>
-			<div class="player player-2"></div>
-			<div class="player player-3"></div>
-			<div class="player player-4"></div>
+			<div class="player player-1" data-player-id="1"><div class="cards"></div></div>
+			<div class="player player-2" data-player-id="2"><div class="cards"></div></div>
+			<div class="player player-3" data-player-id="3"><div class="cards"></div></div>
+			<div class="player player-4" data-player-id="4"><div class="cards"></div></div>
 
 		</div>
 
@@ -30,10 +30,15 @@
 		</div>
 	</div>
 
+    <div class="player-options">
+        <div class="close">×</div>
 
+        <textarea class="js-code"></textarea>
+        <button class="js-code-submit">SAVE</button>
+    </div>
 
     <script src="js/d3.js"></script>
-    <script src="js/bundle.js"></script>
+    <script src="js/bundle.js?1465758571"></script>
 
 </body>
 </html>

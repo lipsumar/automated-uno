@@ -1,6 +1,7 @@
 var Player = require('./Player');
 var Game = require('./Game');
 var deck = require('./deck');
+var _ = require('underscore');
 
 var players = [],
     playerId = 1;
@@ -38,6 +39,9 @@ var API = {
     },
     getPlayers: function(){
         return players;
+    },
+    getPlayer: function(id){
+        return _.findWhere(players, {id: id});
     },
     getCurrentPlayer: function(){
         return game.getCurrentPlayer();
