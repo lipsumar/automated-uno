@@ -2,6 +2,8 @@
 
 > Play UNO (the card game) via automated bots in your browser
 
+![Screenshot](https://raw.githubusercontent.com/lipsumar/automated-uno/master/resources/screenshot.png)
+
 [Live demo](https://lipsumar.github.io/automated-uno/)
 
 * The **Step** button (`❙▶`) will make the current player play his card, this is a step by step mode for debugging.
