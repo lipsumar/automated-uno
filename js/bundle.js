@@ -81,7 +81,7 @@ Game.prototype.play = function() {
     }else if(this.card.addsCards){
         player = this.nextPlayer();
         for(var i=0;i<this.card.addsCards;i++){
-            player.deck.push(this.deck.shift());
+            player.deck.push(this.shiftCardFromDeck());
         }
     }else{
         this.nextPlayer();
@@ -96,9 +96,17 @@ Game.prototype.play = function() {
             total += player.getPoints();
             return total;
         }, 0));
-        console.log('Winner!', player);
+        //console.log('Winner!', player);
     }
 
+};
+
+Game.prototype.shiftCardFromDeck = function() {
+    if(this.deck.length === 0){
+        throw new Error('ERR_EMPTY_GAME_DECK');
+    }
+    var card = this.deck.shift();
+    return card;
 };
 
 
@@ -141,15 +149,6 @@ Game.prototype.deal = function(nbCards) {
     }
 };
 
-Game.prototype.debug = function() {
-    //console.log('Deck:');
-    //console.log(this.deck);
-    console.log('Players:');
-    this.players.forEach(function(p){
-        console.log('- '+p);
-    });
-};
-
 
 
 module.exports = Game;
@@ -169,15 +168,12 @@ Player.prototype.addCard = function(card) {
 Player.prototype.play = function(game) {
 
     // make sure we have a playable card
-    while(!this.canPlayCard(game.card)){
-        if(game.deck.length===0){
-            throw new Error('ERR_EMPTY_GAME_DECK');
-        }
-        this.deck.push(game.deck.shift());
+    while(!this.canPlayCard(game.card,game)){
+        this.deck.push(game.shiftCardFromDeck());
     }
 
     // pick a playable card
-    var card = this.pickCardToPlay(game.card);
+    var card = this.pickCardToPlay(game.card,game);
 
     // remove it from deck
     this.deck.splice(this.deck.indexOf(card),1);
@@ -201,7 +197,6 @@ Player.prototype.pickCardToPlay = function(gameCard) {
         }).sortBy('length').reverse().value();
 
         if(manyColor[0].length > 2){
-            console.log('get rid of '+manyColor[0].color+' ('+manyColor[0].length+')');
             return _.chain(manyColor[0].cards).sortBy('points').reverse().value()[0];
         }
 
@@ -216,13 +211,12 @@ Player.prototype.canPlayCard = function(gameCard) {
     return this.getPlayableCards(gameCard).length > 0;
 };
 Player.prototype.getPlayableCards = function(gameCard) {
-    //console.log('this.deck',this.deck);
     return this.deck.filter(function(card){
         var targetColor = gameCard.currentTargetColor || gameCard.color;
-
         if(gameCard.color === 'black' && card.color === 'black'){
             return false;
         }
+
         if(card.color === targetColor || card.color==='black' || card.value === gameCard.value){
             return true;
         }
@@ -348,9 +342,11 @@ module.exports = {
         var xMax = data.length > 100 ? data.length : 100;
 
         x.domain([0, xMax]);
-    //y.domain([0, 10 ]);
-    //y.domain(d3.extent(data, function(d) { return d.value; }));
-        y.domain([0, 50]);
+        y.domain(d3.extent(data, function(d){
+            return d3.max(d.scores.map(function(i){
+                return i[prop];
+            }));
+        }));
 
         var lines;
         if(data[0]){
@@ -2019,6 +2015,7 @@ var uno = require('./uno.js');
 var scoreGraph = require('./score-graph');
 var history = [];
 var totalRounds = 0;
+var totalTurns = 0;
 // tiny dom lib
 function $(n){var t=document.querySelector(n);return t&&(t.on=function(n,c){return t.addEventListener.call(t,n,function(n){c.call(t,n)})}),t}function $$(n){function t(n){[].forEach.call(this,n)}var c=n;return n&&"string"==typeof n&&(c=document.querySelectorAll(n)),{each:function(n,e){if(c instanceof NodeList)t.call(c,function(t){n.call(e||t)});else for(var l in c)c.hasOwnProperty(l)&&n.call(e||c[l],c[l],l,c)},on:function(n,e){t.call(c,function(t){t.addEventListener.call(t,n,e.bind(t))})}}}
 
@@ -2075,7 +2072,10 @@ function resetScores(){
 }
 
 var nextPlayTimeout;
+var turnsEl = $('.turns');
 function play(){
+    totalTurns++;
+    turnsEl.innerHTML = totalTurns;
     var winner = uno.getWinner();
     if(winner){
         updateGame(uno);
@@ -2110,8 +2110,12 @@ function play(){
             uno.play();
         }catch(err){
             if(err.message === 'ERR_EMPTY_GAME_DECK'){
+                console.log('ERR_EMPTY_GAME_DECK');
                 resetScores();
                 uno.start();// start again
+            }else{
+                new Audio('resources/buzz.mp3').play();
+                stop();
             }
         }
 
@@ -2162,6 +2166,7 @@ $('.restart').on('click', function(){
 });
 $('.step').on('click', function(){
     play();
+    updateGame(uno);
 });
 
 $('.play').on('click', function(){

@@ -52,7 +52,7 @@ Game.prototype.play = function() {
     }else if(this.card.addsCards){
         player = this.nextPlayer();
         for(var i=0;i<this.card.addsCards;i++){
-            player.deck.push(this.deck.shift());
+            player.deck.push(this.shiftCardFromDeck());
         }
     }else{
         this.nextPlayer();
@@ -67,9 +67,17 @@ Game.prototype.play = function() {
             total += player.getPoints();
             return total;
         }, 0));
-        console.log('Winner!', player);
+        //console.log('Winner!', player);
     }
 
+};
+
+Game.prototype.shiftCardFromDeck = function() {
+    if(this.deck.length === 0){
+        throw new Error('ERR_EMPTY_GAME_DECK');
+    }
+    var card = this.deck.shift();
+    return card;
 };
 
 
@@ -110,15 +118,6 @@ Game.prototype.deal = function(nbCards) {
             playerI = 0;
         }
     }
-};
-
-Game.prototype.debug = function() {
-    //console.log('Deck:');
-    //console.log(this.deck);
-    console.log('Players:');
-    this.players.forEach(function(p){
-        console.log('- '+p);
-    });
 };
 
 

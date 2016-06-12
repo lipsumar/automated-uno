@@ -37,9 +37,11 @@ module.exports = {
         var xMax = data.length > 100 ? data.length : 100;
 
         x.domain([0, xMax]);
-    //y.domain([0, 10 ]);
-    //y.domain(d3.extent(data, function(d) { return d.value; }));
-        y.domain([0, 50]);
+        y.domain(d3.extent(data, function(d){
+            return d3.max(d.scores.map(function(i){
+                return i[prop];
+            }));
+        }));
 
         var lines;
         if(data[0]){

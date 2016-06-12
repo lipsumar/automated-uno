@@ -2,6 +2,7 @@ var uno = require('./uno.js');
 var scoreGraph = require('./score-graph');
 var history = [];
 var totalRounds = 0;
+var totalTurns = 0;
 // tiny dom lib
 function $(n){var t=document.querySelector(n);return t&&(t.on=function(n,c){return t.addEventListener.call(t,n,function(n){c.call(t,n)})}),t}function $$(n){function t(n){[].forEach.call(this,n)}var c=n;return n&&"string"==typeof n&&(c=document.querySelectorAll(n)),{each:function(n,e){if(c instanceof NodeList)t.call(c,function(t){n.call(e||t)});else for(var l in c)c.hasOwnProperty(l)&&n.call(e||c[l],c[l],l,c)},on:function(n,e){t.call(c,function(t){t.addEventListener.call(t,n,e.bind(t))})}}}
 
@@ -58,7 +59,10 @@ function resetScores(){
 }
 
 var nextPlayTimeout;
+var turnsEl = $('.turns');
 function play(){
+    totalTurns++;
+    turnsEl.innerHTML = totalTurns;
     var winner = uno.getWinner();
     if(winner){
         updateGame(uno);
@@ -93,8 +97,12 @@ function play(){
             uno.play();
         }catch(err){
             if(err.message === 'ERR_EMPTY_GAME_DECK'){
+                console.log('ERR_EMPTY_GAME_DECK');
                 resetScores();
                 uno.start();// start again
+            }else{
+                new Audio('resources/buzz.mp3').play();
+                stop();
             }
         }
 
@@ -145,6 +153,7 @@ $('.restart').on('click', function(){
 });
 $('.step').on('click', function(){
     play();
+    updateGame(uno);
 });
 
 $('.play').on('click', function(){

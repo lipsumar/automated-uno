@@ -12,15 +12,12 @@ Player.prototype.addCard = function(card) {
 Player.prototype.play = function(game) {
 
     // make sure we have a playable card
-    while(!this.canPlayCard(game.card)){
-        if(game.deck.length===0){
-            throw new Error('ERR_EMPTY_GAME_DECK');
-        }
-        this.deck.push(game.deck.shift());
+    while(!this.canPlayCard(game.card,game)){
+        this.deck.push(game.shiftCardFromDeck());
     }
 
     // pick a playable card
-    var card = this.pickCardToPlay(game.card);
+    var card = this.pickCardToPlay(game.card,game);
 
     // remove it from deck
     this.deck.splice(this.deck.indexOf(card),1);
@@ -44,7 +41,6 @@ Player.prototype.pickCardToPlay = function(gameCard) {
         }).sortBy('length').reverse().value();
 
         if(manyColor[0].length > 2){
-            console.log('get rid of '+manyColor[0].color+' ('+manyColor[0].length+')');
             return _.chain(manyColor[0].cards).sortBy('points').reverse().value()[0];
         }
 
@@ -59,13 +55,12 @@ Player.prototype.canPlayCard = function(gameCard) {
     return this.getPlayableCards(gameCard).length > 0;
 };
 Player.prototype.getPlayableCards = function(gameCard) {
-    //console.log('this.deck',this.deck);
     return this.deck.filter(function(card){
         var targetColor = gameCard.currentTargetColor || gameCard.color;
-
         if(gameCard.color === 'black' && card.color === 'black'){
             return false;
         }
+
         if(card.color === targetColor || card.color==='black' || card.value === gameCard.value){
             return true;
         }
