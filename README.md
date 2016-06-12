@@ -21,6 +21,24 @@ A game of UNO, played by bots.
 Click a player to see the code used to select a card (javascript). Here is an example of a simple strategy:
 
 ```js
+// choose the card with highest points
+return _.sortBy(playable,'points').reverse()[0];
+```
+
+You must return a `Card`, that's all you need to do.
+
+Available variables:
+* `_`: [Underscore.js](http://underscorejs.org/)
+* `playable`: an array of `Card` in your hand that are possible to play at the curren turn
+* `gameCard`: the `Card` on the table at the current turn
+* `others`: an array giving information about the other players
+
+You can use `console.log` to debug your function, it will show up in your browser console.
+
+## Other examples
+
+
+```js
 // group card by color, count them and order in descending order
 var manyColor = _.chain(playable).groupBy('color').map(function(group){
     return {length: group.length, cards: group, color: group[0].color};
@@ -35,16 +53,6 @@ if(manyColor[0].length > 2){
 // default is to choose the point with highest points
 return _.chain(playable).sortBy('points').last().value();
 ```
-
-You must return a `Card`, that's all you need to do.
-
-Available variables:
-* `_`: [Underscore.js](http://underscorejs.org/)
-* `playable`: an array of `Card` in your hand that are possible to play at the curren turn
-* `gameCard`: the `Card` on the table at the current turn
-* `others`: an array giving information about the other players
-
-You can use `console.log` to debug your function, it will show up in your browser console.
 
 
 ## Why did you do that ?
