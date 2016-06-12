@@ -1,33 +1,31 @@
 html,body{
-	width:100%;
-	height: 100%;
-	overflow: hidden;
-	font-family: sans-serif;
-	margin:0;
+    width:100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: sans-serif;
+    margin:0;
 }
 body{
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#78b23a+0,4fa547+100 */ /* too yellow */
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#69b73c+0,4fa547+100 */
-	background: rgb(105,183,60); /* Old browsers */
-	background: -moz-radial-gradient(center, ellipse cover,  rgba(105,183,60,1) 0%, rgba(79,165,71,1) 100%); /* FF3.6-15 */
-	background: -webkit-radial-gradient(center, ellipse cover,  rgba(105,183,60,1) 0%,rgba(79,165,71,1) 100%); /* Chrome10-25,Safari5.1-6 */
-	background: radial-gradient(ellipse at center,  rgba(105,183,60,1) 0%,rgba(79,165,71,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#69b73c', endColorstr='#4fa547',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#78b23a+0,4fa547+100 */ /* too yellow */
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#69b73c+0,4fa547+100 */
+    background: rgb(105,183,60); /* Old browsers */ /* FF3.6-15 */ /* Chrome10-25,Safari5.1-6 */
+    background: radial-gradient(ellipse at center,  rgba(105,183,60,1) 0%,rgba(79,165,71,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#69b73c', endColorstr='#4fa547',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
     color:#fff;
 }
 
 body::before{
-	content:'';
-	display:block;
-	position: absolute;
-	top:0;
-	right:0;
-	bottom:0;
-	left:0;
-	/* noise */
-	background-image: url(data:image/png;base64,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);
-	opacity: 0.5;
-	pointer-events: none;
+    content:'';
+    display:block;
+    position: absolute;
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
+    /* noise */
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c8TV1mAAAAG3RSTlNAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAvEOwtAAAFVklEQVR4XpWWB67c2BUFb3g557T/hRo9/WUMZHlgr4Bg8Z4qQgQJlHI4A8SzFVrapvmTF9O7dmYRFZ60YiBhJRCgh1FYhiLAmdvX0CzTOpNE77ME0Zty/nWWzchDtiqrmQDeuv3powQ5ta2eN0FY0InkqDD73lT9c9lEzwUNqgFHs9VQce3TVClFCQrSTfOiYkVJQBmpbq2L6iZavPnAPcoU0dSw0SUTqz/GtrGuXfbyyBniKykOWQWGqwwMA7QiYAxi+IlPdqo+hYHnUt5ZPfnsHJyNiDtnpJyayNBkF6cWoYGAMY92U2hXHF/C1M8uP/ZtYdiuj26UdAdQQSXQErwSOMzt/XWRWAz5GuSBIkwG1H3FabJ2OsUOUhGC6tK4EMtJO0ttC6IBD3kM0ve0tJwMdSfjZo+EEISaeTr9P3wYrGjXqyC1krcKdhMpxEnt5JetoulscpyzhXN5FRpuPHvbeQaKxFAEB6EN+cYN6xD7RYGpXpNndMmZgM5Dcs3YSNFDHUo2LGfZuukSWyUYirJAdYbF3MfqEKmjM+I2EfhA94iG3L7uKrR+GdWD73ydlIB+6hgref1QTlmgmbM3/LeX5GI1Ux1RWpgxpLuZ2+I+IjzZ8wqE4nilvQdkUdfhzI5QDWy+kw5Wgg2pGpeEVeCCA7b85BO3F9DzxB3cdqvBzWcmzbyMiqhzuYqtHRVG2y4x+KOlnyqla8AoWWpuBoYRxzXrfKuILl6SfiWCbjxoZJUaCBj1CjH7GIaDbc9kqBY3W/Rgjda1iqQcOJu2WW+76pZC9QG7M00dffe9hNnseupFL53r8F7YHSwJWUKP2q+k7RdsxyOB11n0xtOvnW4irMMFNV4H0uqwS5ExsmP9AxbDTc9JwgneAT5vTiUSm1E7BSflSt3bfa1tv8Di3R8n3Af7MNWzs49hmauE2wP+ttrq+AsWpFG2awvsuOqbipWHgtuvuaAE+A1Z/7gC9hesnr+7wqCwG8c5yAg3AL1fm8T9AZtp/bbJGwl1pNrE7RuOX7PeMRUERVaPpEs+yqeoSmuOlokqw49pgomjLeh7icHNlG19yjs6XXOMedYm5xH2YxpV2tc0Ro2jJfxC50ApuxGob7lMsxfTbeUv07TyYxpeLucEH1gNd4IKH2LAg5TdVhlCafZvpskfncCfx8pOhJzd76bJWeYFnFciwcYfubRc12Ip/ppIhA1/mSZ/RxjFDrJC5xifFjJpY2Xl5zXdguFqYyTR1zSp1Y9p+tktDYYSNflcxI0iyO4TPBdlRcpeqjK/piF5bklq77VSEaA+z8qmJTFzIWiitbnzR794USKBUaT0NTEsVjZqLaFVqJoPN9ODG70IPbfBHKK+/q/AWR0tJzYHRULOa4MP+W/HfGadZUbfw177G7j/OGbIs8TahLyynl4X4RinF793Oz+BU0saXtUHrVBFT/DnA3ctNPoGbs4hRIjTok8i+algT1lTHi4SxFvONKNrgQFAq2/gFnWMXgwffgYMJpiKYkmW3tTg3ZQ9Jq+f8XN+A5eeUKHWvJWJ2sgJ1Sop+wwhqFVijqWaJhwtD8MNlSBeWNNWTa5Z5kPZw5+LbVT99wqTdx29lMUH4OIG/D86ruKEauBjvH5xy6um/Sfj7ei6UUVk4AIl3MyD4MSSTOFgSwsH/QJWaQ5as7ZcmgBZkzjjU1UrQ74ci1gWBCSGHtuV1H2mhSnO3Wp/3fEV5a+4wz//6qy8JxjZsmxxy5+4w9CDNJY09T072iKG0EnOS0arEYgXqYnXcYHwjTtUNAcMelOd4xpkoqiTYICWFq0JSiPfPDQdnt+4/wuqcXY47QILbgAAAABJRU5ErkJggg==);
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 button{
@@ -41,64 +39,78 @@ button{
 }
 button:hover{
 
-    transform:scale(1.03)
+    -webkit-transform:scale(1.03);
+
+            transform:scale(1.03)
 }
 
 .play-area{
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-	height: 100%;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .card-group{
-	position:relative;
-	width: 100px;
-	height:156px;
+    position:relative;
+    width: 100px;
+    height:156px;
 }
 
 .card-group .card{
-	position: absolute;
+    position: absolute;
 }
 .card-group .card:nth-child(1){
-	top:1em;
-	left:1em;
+    top:1em;
+    left:1em;
 }
 .card-group .card:nth-child(2){
-	top:2em;
-	left:2em;
+    top:2em;
+    left:2em;
 }
 .card-group .card:nth-child(3){
-	top:3em;
-	left:3em;
+    top:3em;
+    left:3em;
 }
 .card-group .card:nth-child(4){
-	top:4em;
-	left:4em;
+    top:4em;
+    left:4em;
 }
 .card-group .card:nth-child(5){
-	top:5em;
-	left:5em;
+    top:5em;
+    left:5em;
 }
 
 .card{
-	position: relative;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100px;
-	height:156px;
-	border:6px solid #fff;
-	border-radius: 6px;
-	margin:5px;
+    position: relative;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    width: 100px;
+    height:156px;
+    border:6px solid #fff;
+    border-radius: 6px;
+    margin:5px;
     overflow: hidden;
 
-	font-family: sans-serif;
-	font-size:100px;
+    font-family: sans-serif;
+    font-size:100px;
 
-	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  	transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 
     background-color:#000;
     color:#000;
@@ -108,96 +120,98 @@ button:hover{
 }
 
 .card .inner{
-	display:inline-block;
-	vertical-align:middle;
-	background:#fff;
-	padding:0 26px;
-	border-radius:100px 60px / 120px 60px;
-	line-height:1.4;
+    display:inline-block;
+    vertical-align:middle;
+    background:#fff;
+    padding:0 26px;
+    border-radius:100px 60px / 120px 60px;
+    line-height:1.4;
 }
 
 .card::before,
 .card::after{
-	color:#fff;
-	font-size: 20px;
+    color:#fff;
+    font-size: 20px;
 }
 .card::before{
-	position: absolute;
-	top:2px;
-	left:5px;
+    position: absolute;
+    top:2px;
+    left:5px;
 }
 .card::after{
-	position: absolute;
-	bottom:2px;
-	right:5px;
-	transform: rotate(180deg);
+    position: absolute;
+    bottom:2px;
+    right:5px;
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg);
 }
 
 /* card size */
 .card--small{
-	width:33px;
-	height: 52px;
-	border-width: 3px;
-	margin:1.5px;
-	font-size:33px;
-	border-radius: 3px;
+    width:33px;
+    height: 52px;
+    border-width: 3px;
+    margin:1.5px;
+    font-size:33px;
+    border-radius: 3px;
 }
 .card--small .inner{
-	padding: 0 8.5px;
-	border-radius: 33px 20px / 40px 20px;
+    padding: 0 8.5px;
+    border-radius: 33px 20px / 40px 20px;
 }
 .card--small::before,
 .card--small::after{
-	font-size: 6px;
+    font-size: 6px;
 }
 .card--small::before{
 
-	top:0px;
-	left:2px;
+    top:0px;
+    left:2px;
 }
 .card--small::after{
 
-	bottom:0px;
-	right:1px;
-	transform: rotate(180deg);
+    bottom:0px;
+    right:1px;
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg);
 }
 
 
 .card--back{
-	background-color: #151515 !important;
-	background-image: url(../img/card--back.jpg);
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: 50% 50%;
+    background-color: #151515 !important;
+    background-image: url(../img/card--back.jpg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
 
 
 }
 .card--back *,
 .card--back::before,
 .card--back::after{
-	visibility: hidden !important;
+    visibility: hidden !important;
 }
 .card:hover{
-	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 
 
 .card.red{
-	background-color:#C72A18;
-	color:#C72A18;
+    background-color:#C72A18;
+    color:#C72A18;
 }
 .card.green{
-	background-color:#18A849;
-	color:#18A849;
+    background-color:#18A849;
+    color:#18A849;
 }
 .card.blue{
-	background-color:#0063B3;
-	color:#0063B3;
+    background-color:#0063B3;
+    color:#0063B3;
 }
 .card.yellow{
-	background-color:#E6CA1E;
-	color:#E6CA1E;
+    background-color:#E6CA1E;
+    color:#E6CA1E;
 }
 
 .card.val-0:before,
@@ -258,40 +272,50 @@ button:hover{
 
 
 .game{
-	display: flex;
-	width:100%;
-	height:calc(100% - 200px);
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width:100%;
+    height:calc(100% - 200px);
 }
 
 .players{
-	display: flex;
-	flex-wrap: wrap;
-	width:80%;
-	height:100%;
-	justify-content: center;
-	align-items: center;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+    width:80%;
+    height:100%;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
 }
 .player{
-	padding:34px 18px 18px 18px;
-	margin:10px;
-	background:rgba(255,255,255,0.14);
-	counter-increment: playerNum;
-	border-radius: 3px;
-	position: relative;
-	width:30%;
+    padding:34px 18px 18px 18px;
+    margin:10px;
+    background:rgba(255,255,255,0.14);
+    counter-increment: playerNum;
+    border-radius: 3px;
+    position: relative;
+    width:30%;
 }
 .player::before{
-	content: "PLAYER " counter(playerNum);
-	display:block;
-	position: absolute;
-	top:10px;
-	left:0;
-	right:0;
-	text-align: center;
-	color:rgba(255,255,255,0.7);
-	text-shadow: rgba(0,0,0,0.2) 1px 1px 1px;
-	font-weight: bold;
-	padding-bottom: 3px;
+    content: "PLAYER " counter(playerNum);
+    display:block;
+    position: absolute;
+    top:10px;
+    left:0;
+    right:0;
+    text-align: center;
+    color:rgba(255,255,255,0.7);
+    text-shadow: rgba(0,0,0,0.2) 1px 1px 1px;
+    font-weight: bold;
+    padding-bottom: 3px;
 
 }
 .player.current{
@@ -306,20 +330,34 @@ button:hover{
 }
 
 .player-3{
-    order:10;
+    -webkit-order:10;
+        -ms-flex-order:10;
+            order:10;
 }
 
 .player .cards{
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
 }
 
 .deck{
-	width:20%;
-	display: flex;
-    flex-direction: column;
-	justify-content: center;
-	align-items: center;
+    width:20%;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
 }
 
 svg{
@@ -370,7 +408,8 @@ svg{
     border-radius: 3px;
 
     opacity: 0;
-    transform: scale(0.8);
+    -webkit-transform: scale(0.8);
+            transform: scale(0.8);
     transition: all 0.18s ease;
     pointer-events: none;
     z-index: 10;
@@ -378,7 +417,8 @@ svg{
 
 .player-options--show{
     opacity: 1;
-    transform: scale(1);
+    -webkit-transform: scale(1);
+            transform: scale(1);
 
     pointer-events: initial;
 }
